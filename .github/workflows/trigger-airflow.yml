@@ -1,0 +1,20 @@
+name: Trigger Airflow Training DAG
+
+# This is the piece that replaces "someone manually runs the script":
+# tagging a release now automatically triggers the training DAG in your
+# existing Airflow instance, passing along which Docker image tag to run.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Airflow REST API to trigger DAG run
+        run: |
+          curl -f -X POST "${{ secrets.AIRFLOW_BASE_URL }}/api/v1/dags/churn_training_dag/dagRuns" \
+            -H "Content-Type: application/json" \
+            -u "${{ secrets.AIRFLOW_USERNAME }}:${{ secrets.AIRFLOW_PASSWORD }}" \
+            -d "{\"conf\": {\"image_tag\": \"${{ github.ref_name }}\"}}"
