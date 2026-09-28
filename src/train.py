@@ -39,7 +39,7 @@ def train(output_dir: str = "artifacts", random_state: int = 42) -> dict:
     )
 
     logger.info("Training model...")
-    model = RandomForestClassifier(n_estimators=200, max_depth=6, random_state=random_state)
+    model = RandomForestClassifier(n_estimators=300, max_depth=6, random_state=random_state)
     model.fit(X_train, y_train)
 
     preds = model.predict(X_test)
