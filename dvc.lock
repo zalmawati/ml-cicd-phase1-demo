@@ -1,0 +1,51 @@
+schema: '2.0'
+stages:
+  make_dataset:
+    cmd: python -m src.make_dataset --out data/churn.csv
+    deps:
+    - path: src/data.py
+      hash: md5
+      md5: 3d9525c2192e927dd4ae1736224b7b74
+      size: 3245
+    - path: src/make_dataset.py
+      hash: md5
+      md5: f284a137d3843e3d5d4681ce991257b5
+      size: 1094
+    params:
+      params.yaml:
+        dataset:
+          n_samples: 2000
+          seed: 42
+          label_noise: 0.05
+    outs:
+    - path: data/churn.csv
+      hash: md5
+      md5: 84740dc7380c9539ca34ce1732fe4d05
+      size: 33360
+  train:
+    cmd: python -m src.train --data-path data/churn.csv --output-dir outputs
+    deps:
+    - path: data/churn.csv
+      hash: md5
+      md5: 84740dc7380c9539ca34ce1732fe4d05
+      size: 33360
+    - path: src/train.py
+      hash: md5
+      md5: cc3b3b65ed4fe4d01eb41ff26c417b55
+      size: 5640
+    params:
+      params.yaml:
+        train:
+          n_estimators: 200
+          max_depth: 6
+          test_size: 0.2
+          random_state: 42
+    outs:
+    - path: outputs/metrics.json
+      hash: md5
+      md5: f10f9e431952fc544ace7445263fe316
+      size: 64
+    - path: outputs/model.joblib
+      hash: md5
+      md5: 7caad7495e7160a392728f7a250afc8b
+      size: 1014089
