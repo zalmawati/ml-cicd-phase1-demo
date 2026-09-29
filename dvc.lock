@@ -16,19 +16,19 @@ stages:
         dataset:
           n_samples: 2000
           seed: 42
-          label_noise: 0.05
+          label_noise: 0.2
     outs:
     - path: data/churn.csv
       hash: md5
-      md5: 84740dc7380c9539ca34ce1732fe4d05
-      size: 33360
+      md5: ea47c40410d774a7e323f0eb610f1092
+      size: 33365
   train:
     cmd: python -m src.train --data-path data/churn.csv --output-dir outputs
     deps:
     - path: data/churn.csv
       hash: md5
-      md5: 84740dc7380c9539ca34ce1732fe4d05
-      size: 33360
+      md5: ea47c40410d774a7e323f0eb610f1092
+      size: 33365
     - path: src/train.py
       hash: md5
       md5: cc3b3b65ed4fe4d01eb41ff26c417b55
@@ -43,9 +43,9 @@ stages:
     outs:
     - path: outputs/metrics.json
       hash: md5
-      md5: f10f9e431952fc544ace7445263fe316
-      size: 64
+      md5: 1d7dd3cd83367684fa713b9fe9a21f67
+      size: 65
     - path: outputs/model.joblib
       hash: md5
-      md5: 7caad7495e7160a392728f7a250afc8b
-      size: 1014089
+      md5: beb353183cbd73a984a3a1aef43f4d70
+      size: 1134249
