@@ -39,3 +39,18 @@ def test_validate_data_empty_dataframe():
     df = generate_synthetic_data(n_samples=10).iloc[0:0]
     with pytest.raises(DataValidationError, match="empty"):
         validate_data(df)
+
+
+def test_label_noise_changes_the_labels():
+    clean = generate_synthetic_data(n_samples=500, label_noise=0.0)
+    noisy = generate_synthetic_data(n_samples=500, label_noise=0.2)
+    assert (clean["churn"] != noisy["churn"]).any()
+
+
+def test_load_csv_roundtrip(tmp_path):
+    from src.data import load_csv
+
+    df = generate_synthetic_data(n_samples=20)
+    path = tmp_path / "d.csv"
+    df.to_csv(path, index=False)
+    validate_data(load_csv(str(path)))

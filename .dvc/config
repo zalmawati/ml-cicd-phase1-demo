@@ -1,0 +1,4 @@
+[core]
+    remote = localremote
+['remote "localremote"']
+    url = D:\Greenphyto\Task\MLOpsExploration\dvc-remote

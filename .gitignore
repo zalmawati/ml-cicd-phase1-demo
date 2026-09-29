@@ -1,7 +1,9 @@
 __pycache__/
 *.pyc
 .mlopsvenv/
-# *venv*/
+# Catch-all: matches any folder ending in "venv" (mlopsvenv, myenv-venv, etc.)
+# so a differently-named virtual environment never slips through again.
+*venv*/
 artifacts/
 .pytest_cache/
 .coverage
@@ -9,3 +11,8 @@ htmlcov/
 *.egg-info/
 .DS_Store
 actions-runner/
+
+# MLflow local (no-server) mode
+mlflow.db
+mlruns/
+mlartifacts/

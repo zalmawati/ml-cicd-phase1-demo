@@ -1,0 +1,12 @@
+# Single source of truth for hyperparameters and dataset settings.
+# DVC watches these keys (see dvc.yaml), and every training run logs them to MLflow.
+dataset:
+  n_samples: 2000
+  seed: 42
+  label_noise: 0.20   # fraction of labels flipped; raise it to simulate a "messier" data version
+
+train:
+  n_estimators: 200
+  max_depth: 6
+  test_size: 0.2
+  random_state: 42

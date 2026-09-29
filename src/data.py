@@ -14,15 +14,23 @@ from sklearn.datasets import make_classification
 REQUIRED_COLUMNS = ["tenure_months", "monthly_spend", "support_tickets", "churn"]
 
 
+def load_csv(path: str) -> pd.DataFrame:
+    """Load a dataset produced by `src.make_dataset` (or any CSV with our schema)."""
+    return pd.read_csv(path)
+
+
 class DataValidationError(Exception):
     """Raised when the input data fails a quality check."""
 
 
-def generate_synthetic_data(n_samples: int = 2000, random_state: int = 42) -> pd.DataFrame:
+def generate_synthetic_data(
+    n_samples: int = 2000, random_state: int = 42, label_noise: float = 0.0
+) -> pd.DataFrame:
     """Generate a synthetic churn dataset.
 
     Stands in for "pull last 90 days of customer data from the warehouse"
-    in a real pipeline.
+    in a real pipeline. `label_noise` randomly flips that fraction of labels,
+    which is how we simulate a "messier" version of the dataset in Phase 2.
     """
     X, y = make_classification(
         n_samples=n_samples,
@@ -31,6 +39,7 @@ def generate_synthetic_data(n_samples: int = 2000, random_state: int = 42) -> pd
         n_redundant=0,
         n_clusters_per_class=1,
         weights=[0.7, 0.3],
+        flip_y=label_noise,
         random_state=random_state,
     )
     df = pd.DataFrame(X, columns=["tenure_months", "monthly_spend", "support_tickets"])

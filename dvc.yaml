@@ -1,0 +1,23 @@
+stages:
+  make_dataset:
+    cmd: python -m src.make_dataset --out data/churn.csv
+    deps:
+      - src/make_dataset.py
+      - src/data.py
+    params:
+      - dataset
+    outs:
+      - data/churn.csv
+
+  train:
+    cmd: python -m src.train --data-path data/churn.csv --output-dir outputs
+    deps:
+      - data/churn.csv
+      - src/train.py
+    params:
+      - train
+    outs:
+      - outputs/model.joblib
+    metrics:
+      - outputs/metrics.json:
+          cache: false

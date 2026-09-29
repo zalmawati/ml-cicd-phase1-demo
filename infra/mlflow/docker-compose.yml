@@ -1,0 +1,60 @@
+# MLflow tracking server + model registry, backed by Postgres.
+#
+#   docker compose up -d --build     -> UI at http://localhost:5000
+#   docker compose down              -> stop (data kept)
+#   docker compose down -v           -> stop AND delete all experiments (fresh start)
+#
+# LOCAL LEARNING SETUP: the passwords below are placeholders and the server has no
+# login. Do not expose port 5000 to a network you don't control.
+
+services:
+  mlflow-db:
+    image: postgres:16-alpine
+    container_name: mlflow-db
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow_pass
+      POSTGRES_DB: mlflow
+    volumes:
+      - mlflow-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mlflow -d mlflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mlflow-server
+    depends_on:
+      mlflow-db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow-artifacts:/mlartifacts
+    # --serve-artifacts: clients upload models over HTTP through the server, so a training
+    #   container never needs a shared folder or cloud credentials.
+    # --allowed-hosts: MLflow 3.x rejects (HTTP 403) any Host header it doesn't recognise.
+    #   Containers reach this server as "host.docker.internal:5000", so it must be listed.
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri postgresql+psycopg2://mlflow:mlflow_pass@mlflow-db:5432/mlflow
+      --artifacts-destination /mlartifacts
+      --serve-artifacts
+      --allowed-hosts "localhost:*,127.0.0.1:*,host.docker.internal:*,mlflow:*"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  mlflow-db-data:
+  mlflow-artifacts:
