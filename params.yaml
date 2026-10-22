@@ -6,7 +6,7 @@ dataset:
   label_noise: 0.20   # fraction of labels flipped; raise it to simulate a "messier" data version
 
 train:
-  n_estimators: 200
+  n_estimators: 300  #was 200
   max_depth: 6
   test_size: 0.2
   random_state: 42
